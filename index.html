@@ -1,95 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S_God_Vip_Pannel</title>
-    <style>
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 400px;
-            margin: 40px auto;
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        h1 {
-            color: #38bdf8;
-            font-size: 22px;
-        }
-        input {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 6px;
-            border: 1px solid #475569;
-            background: #0f172a;
-            color: #fff;
-            text-align: center;
-        }
-        .btn {
-            display: block;
-            width: 85%;
-            margin: 15px auto;
-            padding: 12px;
-            background: #38bdf8;
-            color: #0f172a;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn:hover {
-            background: #0ea5e9;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #4ade80;
-        }
-    </style>
-</head>
-<body>
+<script>
+    // History store karne ke liye array
+    let historyLog = [];
 
-    <div class="container">
-        <h1>S_God_Vip_Pannel</h1>
-        <p>Prediction Engine</p>
+    function makePrediction() {
+        const inputVal = document.getElementById('userInput').value;
+        const resultDiv = document.getElementById('result');
+
+        if(inputVal.trim() === "") {
+            resultDiv.style.color = "#f87171";
+            resultDiv.innerHTML = "Please enter a valid value!";
+            return;
+        }
+
+        // Input ko history mein add karein
+        historyLog.push(inputVal.toUpperCase());
         
-        <input type="text" id="userInput" placeholder="Enter Value / ID">
-        <button class="btn" onclick="makePrediction()">Get Prediction</button>
+        // Pattern analysis logic call karein
+        let prediction = analyzePattern();
         
-        <div id="result"></div>
-    </div>
+        resultDiv.style.color = "#4ade80";
+        resultDiv.innerHTML = `
+            <p>Input: ${inputVal}</p>
+            <p style="color: #38bdf8;">Next Predicted Trend: <strong>${prediction}</strong></p>
+        `;
+    }
 
-    <script>
-        function makePrediction() {
-            const inputVal = document.getElementById('userInput').value;
-            const resultDiv = document.getElementById('result');
-
-            if(inputVal.trim() === "") {
-                resultDiv.style.color = "#f87171";
-                resultDiv.innerHTML = "Please enter a valid value!";
-                return;
-            }
-
-            // Simple random/analytical logic for demonstration
+    function analyzePattern() {
+        if (historyLog.length < 3) {
             const outcomes = ["BIG", "SMALL", "WIN", "LOSS", "RED", "GREEN"];
-            const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-            
-            resultDiv.style.color = "#4ade80";
-            resultDiv.innerHTML = "Prediction: " + randomOutcome;
+            return outcomes[Math.floor(Math.random() * outcomes.length)];
         }
-    </script>
 
-</body>
-</html>
+        let last = historyLog[historyLog.length - 1];
+        let secondLast = historyLog[historyLog.length - 2];
+
+        // Pattern check logic
+        if (last === secondLast) {
+            return last === "BIG" ? "SMALL" : "BIG";
+        } else {
+            let bigCount = historyLog.filter(item => item === "BIG").length;
+            let smallCount = historyLog.filter(item => item === "SMALL").length;
+            return bigCount > smallCount ? "SMALL" : "BIG";
+        }
+    }
+</script>
